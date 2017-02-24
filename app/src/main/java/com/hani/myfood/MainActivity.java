@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.hani.myfood.model.Recipe;
 
@@ -25,11 +26,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button buttonSave;
     EditText editTextTitle;
     RadioGroup radioGroup;
+    TextView textViewLog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        textViewLog = (TextView) findViewById(R.id.textViewLog);
         imageView1 = (ImageView) findViewById(R.id.imageView1);
         imageView2 = (ImageView) findViewById(R.id.imageView2);
         imageView3 = (ImageView) findViewById(R.id.imageView3);
@@ -40,6 +43,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         imageView2.setOnClickListener(this);
         imageView3.setOnClickListener(this);
         buttonSave.setOnClickListener(this);
+        getLog();
+    }
+
+    void getLog() {
+        String logText = "";
+        DatabaseHandler db = new DatabaseHandler(this);
+        for (Recipe thisRecipe : db.getAllRecipes()) {
+            logText += thisRecipe.toString() + "\n";
+        }
+        textViewLog.setText(logText);
     }
 
     void loadImage(int requestCode) {
@@ -61,13 +74,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         DatabaseHandler db = new DatabaseHandler(this);
         db.addRecipe(new Recipe(title, isVeg, uri1, uri2, uri3));
-        Log.d("Reading: ", "Reading all contacts..");
-        List<Recipe> contacts = db.getAllRecipes();
-
-        for (Recipe cn : contacts) {
-            Log.d("GTA: ", cn.getTitle() + cn.getImagePath1());
-        }
-
+        getLog();
     }
 
     @Override

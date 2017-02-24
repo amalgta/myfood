@@ -59,8 +59,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         if (cursor != null)
             cursor.moveToFirst();
 
-        Recipe recipe = new Recipe(Integer.parseInt(cursor.getString(0)), cursor.getString(1), (cursor.getString(2).equals("TRUE")), cursor.getString(3), cursor.getString(4), cursor.getString(5));
-        return recipe;
+        return new Recipe(Integer.parseInt(cursor.getString(0)), cursor.getString(1), (cursor.getString(2).equals("TRUE")), cursor.getString(3), cursor.getString(4), cursor.getString(5));
     }
 
     public List<Recipe> getAllRecipes() {
@@ -79,8 +78,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 recipe.setImagePath1(cursor.getString(3));
                 recipe.setImagePath2(cursor.getString(4));
                 recipe.setImagePath3(cursor.getString(5));
+                recipes.add(recipe);
             } while (cursor.moveToNext());
         }
+        cursor.close();
         return recipes;
     }
 

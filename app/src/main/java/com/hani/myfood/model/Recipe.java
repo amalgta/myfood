@@ -1,5 +1,7 @@
 package com.hani.myfood.model;
 
+import android.text.TextUtils;
+
 /**
  *
  */
@@ -11,6 +13,21 @@ public class Recipe {
     String imagePath1;
     String imagePath2;
     String imagePath3;
+
+    @Override
+    public String toString() {
+        String thisString = "" + getId() + " ";
+        if (!TextUtils.isEmpty(getTitle()))
+            thisString += getTitle() + " ";
+        thisString += isVeg() ? "TRUE" : "FALSE" + " ";
+        if (!TextUtils.isEmpty(getImagePath1()))
+            thisString += getImagePath1() + " ";
+        if (!TextUtils.isEmpty(getImagePath2()))
+            thisString += getImagePath2() + " ";
+        if (!TextUtils.isEmpty(getImagePath3()))
+            thisString += getImagePath3() + " ";
+        return thisString;
+    }
 
     public Recipe() {
 
