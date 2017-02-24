@@ -16,16 +16,16 @@ public class Recipe {
 
     @Override
     public String toString() {
-        String thisString = "" + getId() + " ";
+        String thisString = "\n";
         if (!TextUtils.isEmpty(getTitle()))
-            thisString += getTitle() + " ";
-        thisString += isVeg() ? "TRUE" : "FALSE" + " ";
+            thisString += "Title : " + getTitle() + "\n";
+        thisString += "Type : " + (isVeg() ? "VEG" : "NON VEG") + "\n";
         if (!TextUtils.isEmpty(getImagePath1()))
-            thisString += getImagePath1() + " ";
+            thisString += "Image1 : " + getImagePath1() + "\n";
         if (!TextUtils.isEmpty(getImagePath2()))
-            thisString += getImagePath2() + " ";
+            thisString += "Image2 : " + getImagePath2() + "\n";
         if (!TextUtils.isEmpty(getImagePath3()))
-            thisString += getImagePath3() + " ";
+            thisString += "Image3 : " + getImagePath3() + "\n";
         return thisString;
     }
 

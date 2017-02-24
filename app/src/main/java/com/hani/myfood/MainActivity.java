@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,8 +19,13 @@ import android.widget.TextView;
 
 import com.hani.myfood.model.Recipe;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     ImageView imageView1, imageView2, imageView3;
@@ -55,9 +63,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         textViewLog.setText(logText);
     }
 
+    String mCurrentPhotoPath;
+
+    private File createImageFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
+    Uri photoURI;
+
     void loadImage(int requestCode) {
-        Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, requestCode);
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ignored) {
+            }
+            if (photoFile != null) {
+                photoURI = FileProvider.getUriForFile(this, "com.hani.myfood", photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, requestCode);
+            }
+        }
     }
 
     void doSave() {
@@ -81,29 +113,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            Uri targetUri = data.getData();
-            Bitmap bitmap;
-            try {
-                bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(targetUri));
-                switch (requestCode) {
-                    case 1:
-                        bitmap1 = bitmap;
-                        imageUri1 = targetUri;
-                        imageView1.setImageBitmap(bitmap1);
-                        break;
-                    case 2:
-                        bitmap2 = bitmap;
-                        imageUri2 = targetUri;
-                        imageView2.setImageBitmap(bitmap2);
-                        break;
-                    case 3:
-                        bitmap3 = bitmap;
-                        imageUri3 = targetUri;
-                        imageView3.setImageBitmap(bitmap3);
-                        break;
-                }
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
+            Bundle extras = data.getExtras();
+            Bitmap bitmap = (Bitmap) extras.get("data");
+            switch (requestCode) {
+                case 1:
+                    bitmap1 = bitmap;
+                    imageUri1 = photoURI;
+                    imageView1.setImageBitmap(bitmap1);
+                    break;
+                case 2:
+                    bitmap2 = bitmap;
+                    imageUri2 = photoURI;
+                    imageView2.setImageBitmap(bitmap2);
+                    break;
+                case 3:
+                    bitmap3 = bitmap;
+                    imageUri3 = photoURI;
+                    imageView3.setImageBitmap(bitmap3);
+                    break;
             }
         }
     }

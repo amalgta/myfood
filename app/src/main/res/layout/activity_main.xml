@@ -80,10 +80,15 @@
             android:text="Save" />
     </LinearLayout>
 
-    <TextView
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/textViewLog"
         android:layout_alignParentBottom="true"
-        android:layout_below="@+id/linearLayoutContent" />
+        android:layout_below="@+id/linearLayoutContent">
+
+        <TextView
+            android:id="@+id/textViewLog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </ScrollView>
 </RelativeLayout>
